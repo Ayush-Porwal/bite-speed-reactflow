@@ -1,20 +1,23 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 
 import ReactFlow, {
+    Node,
+    Edge,
     addEdge,
     Controls,
+    Connection,
     Background,
     useEdgesState,
     useNodesState,
+    ReactFlowInstance,
     ReactFlowProvider,
-    Connection,
 } from "reactflow";
 
 import MessageNode from "./components/nodes/message";
 
 import "reactflow/dist/style.css";
 
-const initialNodes = [
+const initialNodes: Node[] = [
     {
         id: "node_0",
         type: "messageNode",
@@ -23,7 +26,7 @@ const initialNodes = [
     },
 ];
 
-const initialEdges = [];
+const initialEdges: Edge[] = [];
 
 const nodeTypes = {
     messageNode: MessageNode,
@@ -35,10 +38,11 @@ const getId = () => `node_${id++}`;
 
 export default function App() {
     const reactFlowWrapper = useRef<HTMLInputElement>(null);
-    const [selectedNode, setSelectedNode] = useState(null);
+    const [selectedNode, setSelectedNode] = useState<Node | null>(null);
     const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-    const [reactFlowInstance, setReactFlowInstance] = useState(null);
+    const [reactFlowInstance, setReactFlowInstance] =
+        useState<ReactFlowInstance | null>(null);
 
     const onConnect = useCallback((params: Connection) => {
         setEdges((edges) => {
@@ -113,7 +117,9 @@ export default function App() {
         event.dataTransfer.effectAllowed = "move";
     };
 
-    const handleTextAreaOnChange = (event) => {
+    const handleTextAreaOnChange = (
+        event: React.ChangeEvent<HTMLTextAreaElement>
+    ) => {
         if (selectedNode === null) return;
         setNodes((nodes) =>
             nodes.map((node) => {
@@ -150,7 +156,7 @@ export default function App() {
                             fitView
                         >
                             <Controls />
-                            <Background variant="dots" gap={12} size={1} />
+                            <Background gap={12} size={1} />
                         </ReactFlow>
                     </div>
                 </ReactFlowProvider>

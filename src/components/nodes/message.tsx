@@ -1,6 +1,10 @@
-import { Handle, Position } from "reactflow";
+import { NodeProps, Handle, Position } from "reactflow";
 
-const MessageNode = ({ data }) => {
+type NodeData = {
+    label: number;
+};
+
+const MessageNode = ({ data }: NodeProps<NodeData>) => {
     return (
         <div className="w-64 border rounded-md bg-white shadow-sm">
             <div className="px-2 py-1 border rounded-md flex items-center justify-between gap-2 bg-teal-200">
