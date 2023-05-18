@@ -1,5 +1,4 @@
 import { useRef, useState, useEffect, useCallback } from "react";
-
 import ReactFlow, {
     Node,
     Edge,
@@ -12,6 +11,7 @@ import ReactFlow, {
     ReactFlowInstance,
     ReactFlowProvider,
 } from "reactflow";
+import toast, { Toaster } from "react-hot-toast";
 
 import MessageNode from "./components/nodes/message";
 
@@ -135,13 +135,36 @@ export default function App() {
     };
 
     const handleSaveChanges = () => {
-        console.log(nodes);
-        console.log(edges);
+        const sourceHandles = new Set();
+        for (let item of edges) {
+            sourceHandles.add(item.source);
+        }
+        if (sourceHandles.size !== nodes.length - 1) {
+            toast.error("All source nodes are not connected 😒", {
+                position: "bottom-right",
+                duration: 3000,
+                style: {
+                    color: "red",
+                    background: "#FFCCCB",
+                },
+            });
+        } else {
+            toast.success("Changes Saved 😍 ", {
+                position: "bottom-right",
+                duration: 3000,
+                style: {
+                    color: "green",
+                    background: "#e6ffe6",
+                },
+            });
+        }
     };
 
     return (
         <>
-            <div className="px-4 py-2 flex justify-end items-center bg-gray-100">
+            <div
+                className={`px-4 py-2 flex justify-end items-center bg-gray-100`}
+            >
                 <button
                     className="bg-transparent hover:bg-blue-700 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-700 hover:border-transparent rounded"
                     onClick={handleSaveChanges}
@@ -177,12 +200,16 @@ export default function App() {
                                     src="back-arrow.svg"
                                     className="h-6 w-6"
                                     onClick={() => {
-                                        // const currenSelectedNode =
-                                        //     nodes.findIndex(
-                                        //         (item) => item.selected
-                                        //     );
-                                        // nodes[currenSelectedNode].selected =
-                                        //     false;
+                                        setNodes((nodes) =>
+                                            nodes.map((node) => {
+                                                if (
+                                                    node.id === selectedNode.id
+                                                ) {
+                                                    node.selected = false;
+                                                }
+                                                return node;
+                                            })
+                                        );
                                         setSelectedNode(null);
                                     }}
                                 />
@@ -213,6 +240,7 @@ export default function App() {
                     )}
                 </div>
             </div>
+            <Toaster />
         </>
     );
 }
