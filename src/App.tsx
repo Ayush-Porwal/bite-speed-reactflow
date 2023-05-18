@@ -22,7 +22,7 @@ const initialNodes: Node[] = [
         id: "node_0",
         type: "messageNode",
         position: { x: 0, y: 0 },
-        data: { label: "1" },
+        data: { label: "" },
     },
 ];
 
@@ -83,7 +83,7 @@ export default function App() {
                     id: getId(),
                     type,
                     position,
-                    data: { label: `${type} node` },
+                    data: { label: `` },
                 };
 
                 setNodes((nds) => nds.concat(newNode));
@@ -133,10 +133,19 @@ export default function App() {
             })
         );
     };
+
+    const handleSaveChanges = () => {
+        console.log(nodes);
+        console.log(edges);
+    };
+
     return (
         <>
             <div className="px-4 py-2 flex justify-end items-center bg-gray-100">
-                <button className="bg-transparent hover:bg-blue-700 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-700 hover:border-transparent rounded">
+                <button
+                    className="bg-transparent hover:bg-blue-700 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-700 hover:border-transparent rounded"
+                    onClick={handleSaveChanges}
+                >
                     Save Changes
                 </button>
             </div>
@@ -183,7 +192,7 @@ export default function App() {
                             </div>
                             <textarea
                                 onChange={handleTextAreaOnChange}
-                                defaultValue={selectedNode.data.label}
+                                value={selectedNode.data.label}
                                 className="border border-teal-200 rounded-md mx-2 px-2 py-1 focus:outline-blue-500"
                             />
                         </div>

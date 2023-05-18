@@ -4,9 +4,13 @@ type NodeData = {
     label: number;
 };
 
-const MessageNode = ({ data }: NodeProps<NodeData>) => {
+const MessageNode = ({ data, selected }: NodeProps<NodeData>) => {
     return (
-        <div className="w-64 border rounded-md bg-white shadow-sm">
+        <div
+            className={`w-64 border rounded-md bg-white shadow-sm ${
+                selected ? "border-blue-700" : ""
+            }`}
+        >
             <div className="px-2 py-1 border rounded-md flex items-center justify-between gap-2 bg-teal-200">
                 <div className="flex gap-2 items-center justify-center">
                     <img src="message.svg" className="h-6 w-6" />
@@ -19,7 +23,7 @@ const MessageNode = ({ data }: NodeProps<NodeData>) => {
                     readOnly
                     value={data.label}
                     placeholder="Type your message here..."
-                    className="w-full border border-teal-200 rounded-md px-2 py-1"
+                    className="w-full border border-teal-200 rounded-md px-2 py-1 focus:outline-none"
                 />
             </div>
             <Handle type="source" position={Position.Right} />
