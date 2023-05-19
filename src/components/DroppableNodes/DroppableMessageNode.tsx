@@ -4,7 +4,7 @@ type NodeData = {
     label: number;
 };
 
-const MessageNode = ({ data, selected }: NodeProps<NodeData>) => {
+const DroppableMessageNode = ({ data, selected }: NodeProps<NodeData>) => {
     return (
         <div
             className={`w-64 border rounded-md bg-white shadow-sm ${
@@ -32,4 +32,4 @@ const MessageNode = ({ data, selected }: NodeProps<NodeData>) => {
     );
 };
 
-export default MessageNode;
+export default DroppableMessageNode;

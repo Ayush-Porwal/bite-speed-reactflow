@@ -1,7 +1,7 @@
+// 3rd party packages
 import { useRef, useState, useEffect, useCallback } from "react";
 import ReactFlow, {
     Node,
-    Edge,
     addEdge,
     Controls,
     Connection,
@@ -11,29 +11,21 @@ import ReactFlow, {
     ReactFlowInstance,
     ReactFlowProvider,
 } from "reactflow";
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 
-import MessageNode from "./components/nodes/message";
+// common components
+import Navbar from "./components/Navbar/Navbar";
+import RightPanel from "./components/RightPanel/RightPanel";
 
+// utils
+import { getUpdatedNodeData } from "./utils/NodeUtilFunctions";
+import { initialNodes, initialEdges, nodeTypes } from "./utils/FlowUtils";
+
+// styles
 import "reactflow/dist/style.css";
 
-const initialNodes: Node[] = [
-    {
-        id: "node_0",
-        type: "messageNode",
-        position: { x: 0, y: 0 },
-        data: { label: "" },
-    },
-];
-
-const initialEdges: Edge[] = [];
-
-const nodeTypes = {
-    messageNode: MessageNode,
-};
-
+// get id for each new node (we dont want its value to be redeclared thats why keeping it outside of component)
 let id = 1;
-
 const getId = () => `node_${id++}`;
 
 export default function App() {
@@ -121,57 +113,12 @@ export default function App() {
         event: React.ChangeEvent<HTMLTextAreaElement>
     ) => {
         if (selectedNode === null) return;
-        setNodes((nodes) =>
-            nodes.map((node) => {
-                if (node.id === selectedNode.id) {
-                    node.data = {
-                        ...node.data,
-                        label: event.target.value,
-                    };
-                }
-                return node;
-            })
-        );
-    };
-
-    const handleSaveChanges = () => {
-        const sourceHandles = new Set();
-        for (let item of edges) {
-            sourceHandles.add(item.source);
-        }
-        if (sourceHandles.size !== nodes.length - 1) {
-            toast.error("All source nodes are not connected 😒", {
-                position: "bottom-right",
-                duration: 3000,
-                style: {
-                    color: "red",
-                    background: "#FFCCCB",
-                },
-            });
-        } else {
-            toast.success("Changes Saved 😍 ", {
-                position: "bottom-right",
-                duration: 3000,
-                style: {
-                    color: "green",
-                    background: "#e6ffe6",
-                },
-            });
-        }
+        setNodes((nodes) => getUpdatedNodeData(nodes, selectedNode, event));
     };
 
     return (
         <>
-            <div
-                className={`px-4 py-2 flex justify-end items-center bg-gray-100`}
-            >
-                <button
-                    className="bg-transparent hover:bg-blue-700 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-700 hover:border-transparent rounded"
-                    onClick={handleSaveChanges}
-                >
-                    Save Changes
-                </button>
-            </div>
+            <Navbar nodes={nodes} edges={edges} />
             <div className="grid grid-cols-[80vw_20vw]">
                 <ReactFlowProvider>
                     <div style={{ height: "90vh" }} ref={reactFlowWrapper}>
@@ -192,53 +139,13 @@ export default function App() {
                         </ReactFlow>
                     </div>
                 </ReactFlowProvider>
-                <div className="border-l-2 border-l-gray-400">
-                    {selectedNode ? (
-                        <div className="py-2 flex flex-col my-4 mx-2 font-semibold border border-blue-500 rounded">
-                            <div className="px-1 py-1 flex">
-                                <img
-                                    src="back-arrow.svg"
-                                    className="h-6 w-6"
-                                    onClick={() => {
-                                        setNodes((nodes) =>
-                                            nodes.map((node) => {
-                                                if (
-                                                    node.id === selectedNode.id
-                                                ) {
-                                                    node.selected = false;
-                                                }
-                                                return node;
-                                            })
-                                        );
-                                        setSelectedNode(null);
-                                    }}
-                                />
-                                <span className="w-full text-md text-center">
-                                    Message
-                                </span>
-                            </div>
-                            <textarea
-                                onChange={handleTextAreaOnChange}
-                                value={selectedNode.data.label}
-                                className="border border-teal-200 rounded-md mx-2 px-2 py-1 focus:outline-blue-500"
-                            />
-                        </div>
-                    ) : (
-                        <div
-                            draggable
-                            className="py-2 flex flex-col items-center w-1/2 my-4 mx-2 text-blue-700 font-semibold border border-blue-700 rounded"
-                            onDragStart={(event) =>
-                                handleOnDragStart(event, "messageNode")
-                            }
-                        >
-                            <img
-                                src="message.svg"
-                                className="h-6 w-6 text-blue-700"
-                            />
-                            <span>Message</span>
-                        </div>
-                    )}
-                </div>
+                <RightPanel
+                    setNodes={setNodes}
+                    selectedNode={selectedNode}
+                    setSelectedNode={setSelectedNode}
+                    handleOnDragStart={handleOnDragStart}
+                    handleTextAreaOnChange={handleTextAreaOnChange}
+                />
             </div>
             <Toaster />
         </>
